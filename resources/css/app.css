@@ -1,0 +1,71 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.animate-marquee {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 18s linear infinite;
+}
+
+@layer components {
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    .btn-primary {
+        @apply bg-gradient-to-r from-teal-600 to-cyan-700 text-white shadow-md shadow-teal-700/25 hover:from-teal-700 hover:to-cyan-800;
+    }
+
+    .btn-secondary {
+        @apply bg-white text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50 hover:text-teal-800;
+    }
+
+    .btn-danger {
+        @apply bg-white text-rose-700 shadow-sm ring-1 ring-rose-200 hover:bg-rose-50;
+    }
+
+    .input {
+        @apply w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none ring-teal-600/15 placeholder:text-slate-400 focus:border-teal-600 focus:ring-4;
+    }
+
+    .label {
+        @apply mb-1 block text-sm font-medium text-slate-700;
+    }
+
+    .panel {
+        @apply rounded-3xl bg-white shadow-sm shadow-slate-200/70 ring-1 ring-slate-200/80;
+    }
+
+    .modal-card {
+        @apply relative w-full overflow-hidden rounded-3xl bg-white shadow-2xl;
+    }
+
+    .modal-head {
+        @apply bg-gradient-to-r from-teal-600 to-cyan-700 px-6 py-4 text-white;
+    }
+
+    .pill {
+        @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium;
+    }
+}
