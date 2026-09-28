@@ -9,7 +9,7 @@
         $tiles = [
             ['route' => 'system.users.index', 'label' => 'User Management', 'hint' => 'Add and edit users, their groups, workspaces and widgets', 'icon' => 'users', 'color' => 'from-teal-400 to-cyan-600'],
             ['route' => 'system.groups', 'label' => 'Group Management', 'hint' => 'Organise users into access groups', 'icon' => 'group', 'color' => 'from-sky-400 to-indigo-600'],
-            ['route' => 'system.workspaces.index', 'label' => 'Workspace Management', 'hint' => 'Create workspaces, approvers and document control', 'icon' => 'workspace', 'color' => 'from-emerald-400 to-teal-600'],
+            ['route' => 'system.workspaces.index', 'label' => 'Areas', 'hint' => 'The ten starting areas, and any you add', 'icon' => 'workspace', 'color' => 'from-emerald-400 to-teal-600'],
             ['route' => 'system.modules', 'label' => 'Module Configuration', 'hint' => 'Install, edit, enable and disable modules', 'icon' => 'module', 'color' => 'from-violet-400 to-purple-600'],
             ['route' => 'system.widgets.index', 'label' => 'Widget Configuration', 'hint' => 'Build widgets and assign them to people', 'icon' => 'widget', 'color' => 'from-lime-400 to-emerald-600'],
             ['route' => 'system.settings', 'label' => 'System Configuration', 'hint' => 'Application settings and values', 'icon' => 'settings', 'color' => 'from-slate-400 to-slate-600'],
@@ -18,7 +18,7 @@
         $stats = [
             ['label' => 'Users', 'value' => $counts['users'], 'icon' => 'users', 'tone' => 'bg-teal-50 text-teal-700'],
             ['label' => 'Groups', 'value' => $counts['groups'], 'icon' => 'group', 'tone' => 'bg-sky-50 text-sky-700'],
-            ['label' => 'Workspaces', 'value' => $counts['workspaces'], 'icon' => 'workspace', 'tone' => 'bg-emerald-50 text-emerald-700'],
+            ['label' => 'Areas', 'value' => $counts['workspaces'], 'icon' => 'workspace', 'tone' => 'bg-emerald-50 text-emerald-700'],
             ['label' => 'Modules', 'value' => $counts['modules'], 'icon' => 'module', 'tone' => 'bg-violet-50 text-violet-700'],
         ];
     @endphp

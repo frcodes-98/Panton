@@ -38,6 +38,9 @@
         @case('marquee')
             <path d="M4 7h16M4 12h10M4 17h13" />
             @break
+        @case('folder')
+            <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H9l2 2h8.5A1.5 1.5 0 0 1 21 9.5v8A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5Z" />
+            @break
         @case('document')
             <path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" />
             <path d="M14 3.5V8h4.5M8.5 12.5h7M8.5 16h5" />

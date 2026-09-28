@@ -14,7 +14,7 @@ function blankUser() {
         branch: '',
         employee_no: '',
         employee_code: '',
-        user_type: 'Viewer',
+        user_type: 'View Only',
         login_status: 'Enable',
         activation_date: today,
         disable_date: '',
@@ -161,7 +161,7 @@ export function registerPages(Alpine) {
                 return;
             }
 
-            const users = loadRows('panton.users', config.users);
+            const users = config.users;
             const user = users.find((item) => item.id === this.userId);
 
             if (!user) {
@@ -183,7 +183,7 @@ export function registerPages(Alpine) {
             this.delegatePicks = [...(user.delegate_ids ?? [])];
         },
 
-        save() {
+        async save() {
             this.error = this.validate();
 
             if (this.error) {
@@ -193,7 +193,6 @@ export function registerPages(Alpine) {
                 return;
             }
 
-            const users = loadRows('panton.users', config.users);
             const record = {
                 username: this.form.username.trim(),
                 full_name: this.form.full_name.trim(),
@@ -217,20 +216,24 @@ export function registerPages(Alpine) {
                 delegate_ids: [...this.delegatePicks],
             };
 
-            let next = users;
+            const response = await fetch(this.mode === 'edit' ? config.updateUrl : config.storeUrl, {
+                method: this.mode === 'edit' ? 'PUT' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({ ...record, password: this.form.password }),
+            });
 
-            if (this.mode === 'edit') {
-                next = users.map((user) => (user.id === this.userId ? { ...user, ...record } : user));
-            } else {
-                next = [...users, {
-                    ...record,
-                    id: nextId(users),
-                    last_login: '',
-                    last_logout: '',
-                }];
+            if (!response.ok) {
+                const body = await response.json().catch(() => ({}));
+                this.error = body.message || Object.values(body.errors ?? {})[0]?.[0] || 'Could not save to the database.';
+                this.openStep = 1;
+
+                return;
             }
 
-            saveRows('panton.users', next);
             window.location = `${this.indexUrl}?saved=1`;
         },
 
@@ -251,7 +254,7 @@ export function registerPages(Alpine) {
             }
 
             if (!this.form.user_type) {
-                return 'User type is required.';
+                return 'Role is required.';
             }
 
             if (!this.form.login_status) {
@@ -287,7 +290,7 @@ export function registerPages(Alpine) {
                 }
             }
 
-            const users = loadRows('panton.users', config.users);
+            const users = loadRows('panton.directory', config.users);
             const duplicate = users.some((user) => user.username.toLowerCase() === this.form.username.trim().toLowerCase() && user.id !== this.userId);
 
             if (duplicate) {
@@ -404,13 +407,13 @@ export function registerPages(Alpine) {
         controlIds: [],
 
         init() {
-            this.users = loadRows('panton.users', config.users);
+            this.users = config.users;
 
             if (this.mode !== 'edit') {
                 return;
             }
 
-            const workspaces = loadRows('panton.workspaces', config.workspaces);
+            const workspaces = config.workspaces;
             const workspace = workspaces.find((item) => item.id === this.workspaceId);
 
             if (!workspace) {
@@ -452,34 +455,35 @@ export function registerPages(Alpine) {
             this[list] = this.has(list, id) ? this[list].filter((item) => item !== id) : [...this[list], id];
         },
 
-        save() {
+        async save() {
             if (!this.name.trim()) {
-                this.error = 'Workspace name is required.';
+                this.error = 'Area name is required.';
 
                 return;
             }
 
-            const workspaces = loadRows('panton.workspaces', config.workspaces);
-            const duplicate = workspaces.some((workspace) => workspace.name.toLowerCase() === this.name.trim().toLowerCase() && workspace.id !== this.workspaceId);
+            const response = await fetch(this.mode === 'edit' ? config.updateUrl : config.storeUrl, {
+                method: this.mode === 'edit' ? 'PUT' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify({
+                    name: this.name.trim(),
+                    repository: this.repository,
+                    approver_ids: [...this.approverIds],
+                    control_ids: [...this.controlIds],
+                }),
+            });
 
-            if (duplicate) {
-                this.error = 'A workspace with that name already exists.';
+            if (!response.ok) {
+                const body = await response.json().catch(() => ({}));
+                this.error = body.message || Object.values(body.errors ?? {})[0]?.[0] || 'Could not save to the database.';
 
                 return;
             }
 
-            const record = {
-                name: this.name.trim(),
-                repository: this.repository,
-                approver_ids: [...this.approverIds],
-                control_ids: [...this.controlIds],
-            };
-
-            const next = this.mode === 'edit'
-                ? workspaces.map((workspace) => (workspace.id === this.workspaceId ? { ...workspace, ...record } : workspace))
-                : [...workspaces, { ...record, id: nextId(workspaces) }];
-
-            saveRows('panton.workspaces', next);
             window.location = `${this.indexUrl}?saved=1`;
         },
     }));

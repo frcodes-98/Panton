@@ -9,15 +9,7 @@
         $user = session('demo_user');
         $hour = (int) now()->format('G');
         $greeting = $hour < 12 ? 'Good morning' : ($hour < 18 ? 'Good afternoon' : 'Good evening');
-        $apps = array_values(array_filter($tiles, fn ($tile) => $tile['kind'] === 'app'));
-        $workspaces = array_values(array_filter($tiles, fn ($tile) => $tile['kind'] === 'workspace'));
-        $appColors = [
-            'system-control' => 'from-teal-400 to-cyan-600 shadow-cyan-900/40',
-            'tasks' => 'from-sky-400 to-indigo-600 shadow-indigo-900/40',
-            'process-organizer' => 'from-emerald-400 to-teal-600 shadow-emerald-900/40',
-            'notification' => 'from-amber-300 to-orange-500 shadow-orange-900/40',
-            'key-store' => 'from-rose-400 to-fuchsia-600 shadow-rose-900/40',
-        ];
+        $areas = array_values($tiles);
         $palette = [
             'bg-teal-400/20 text-teal-100 ring-teal-300/30',
             'bg-cyan-400/20 text-cyan-100 ring-cyan-300/30',
@@ -36,6 +28,7 @@
         x-data="{
             q: '',
             marquee: null,
+            known: {{ Js::from(array_column($areas, 'name')) }},
             init() {
                 try {
                     const saved = JSON.parse(sessionStorage.getItem('panton.marquee') || 'null');
@@ -43,6 +36,9 @@
                 } catch {}
             },
             matches(name) { return name.toLowerCase().includes(this.q.trim().toLowerCase()); },
+            noMatch() {
+                return this.q.trim() !== '' && !this.known.some((name) => this.matches(name));
+            },
         }"
         class="relative min-h-screen overflow-hidden bg-gradient-to-br from-teal-800 via-teal-900 to-cyan-950"
     >
@@ -66,7 +62,7 @@
                 <div class="flex items-center gap-3">
                     <div class="hidden text-right sm:block">
                         <p class="text-sm font-medium">{{ strtoupper($user) }}</p>
-                        <p class="text-xs text-teal-200">Signed in</p>
+                        <p class="text-xs text-teal-200">Admin</p>
                     </div>
                     <span class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-300 to-orange-400 text-sm font-bold text-orange-950 ring-2 ring-white/30">{{ strtoupper(substr($user, 0, 1)) }}</span>
                     <form method="POST" action="{{ route('logout') }}">
@@ -83,40 +79,24 @@
                 <div>
                     <p class="text-sm font-medium text-teal-200">{{ now()->format('l, j F Y') }}</p>
                     <h1 class="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">{{ $greeting }}, {{ ucfirst(explode('.', $user)[1] ?? $user) }}</h1>
-                    <p class="mt-2 text-teal-100/80">Open an application or jump into one of your {{ count($workspaces) }} workspaces.</p>
+                    <p class="mt-2 text-teal-100/80">Signed in as Admin. Open an area, or add another.</p>
                 </div>
                 <label class="relative w-full md:w-80">
-                    <span class="sr-only">Search workspaces</span>
+                    <span class="sr-only">Search areas</span>
                     <x-icon name="search" class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-teal-200" />
-                    <input x-model="q" type="search" placeholder="Search workspaces" class="w-full rounded-2xl border border-white/15 bg-white/10 py-3 pl-10 pr-4 text-sm text-white placeholder:text-teal-100/60 outline-none backdrop-blur focus:border-white/40 focus:bg-white/15" />
+                    <input x-model="q" type="search" placeholder="Search areas" class="w-full rounded-2xl border border-white/15 bg-white/10 py-3 pl-10 pr-4 text-sm text-white placeholder:text-teal-100/60 outline-none backdrop-blur focus:border-white/40 focus:bg-white/15" />
                 </label>
             </section>
 
-            <section class="mt-10" x-show="!q">
-                <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-teal-200">Applications</h2>
-                <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-                    @foreach ($apps as $tile)
-                        <a href="{{ $href($tile) }}" class="group relative overflow-hidden rounded-3xl bg-gradient-to-br p-5 shadow-xl transition hover:-translate-y-1 {{ $appColors[$tile['slug']] }}">
-                            <span class="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-white/15"></span>
-                            <span class="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-white/20 ring-1 ring-white/30">
-                                <x-icon :name="$tile['icon']" class="h-6 w-6" />
-                            </span>
-                            <span class="relative mt-6 block font-semibold">{{ $tile['name'] }}</span>
-                            <span class="relative mt-0.5 flex items-center gap-1 text-xs text-white/80">
-                                Open <x-icon name="chevron" class="h-3 w-3 transition group-hover:translate-x-0.5" />
-                            </span>
-                        </a>
-                    @endforeach
-                </div>
-            </section>
-
             <section class="mt-10">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-teal-200">Workspaces</h2>
-                    <p x-show="q" x-cloak class="text-xs text-teal-200">Filtering by “<span x-text="q"></span>”</p>
+                <div class="flex items-center justify-between gap-3">
+                    <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-teal-200">Areas</h2>
+                    <a href="{{ route('system.workspaces.create') }}" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/15 hover:bg-white/20">
+                        <x-icon name="plus" class="h-3.5 w-3.5" /> Add area
+                    </a>
                 </div>
                 <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                    @foreach ($workspaces as $index => $tile)
+                    @foreach ($areas as $index => $tile)
                         <a
                             href="{{ $href($tile) }}"
                             x-show="matches(@js($tile['name']))"
@@ -129,8 +109,8 @@
                         </a>
                     @endforeach
                 </div>
-                <p x-show="q && !{{ Js::from(array_column($workspaces, 'name')) }}.some((name) => matches(name))" x-cloak class="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm text-teal-100">
-                    No workspace matches that search.
+                <p x-show="noMatch()" x-cloak class="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6 text-center text-sm text-teal-100">
+                    No area matches that search.
                 </p>
             </section>
         </div>

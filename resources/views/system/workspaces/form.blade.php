@@ -1,8 +1,8 @@
 @extends('layouts.system')
 
-@section('title', ($mode === 'edit' ? 'Edit workspace' : 'Create workspace').' · Panton')
+@section('title', ($mode === 'edit' ? 'Edit area' : 'Add area').' · Panton')
 
-@section('heading', $mode === 'edit' ? 'Edit workspace' : 'Create workspace')
+@section('heading', $mode === 'edit' ? 'Edit area' : 'Add area')
 
 @section('main')
     @php
@@ -16,11 +16,13 @@
         'mode' => $mode,
         'workspaceId' => $workspaceId,
         'indexUrl' => route('system.workspaces.index'),
+        'storeUrl' => route('system.areas.store'),
+        'updateUrl' => $workspaceId ? route('system.areas.update', $workspaceId) : '',
         'workspaces' => $workspaces,
         'users' => $users,
     ]))" x-cloak class="mx-auto max-w-4xl">
         <a href="{{ route('system.workspaces.index') }}" class="mb-4 inline-flex items-center gap-1 text-sm font-medium text-teal-700 hover:text-teal-900">
-            <x-icon name="chevron" class="h-4 w-4 rotate-180" /> Back to workspaces
+            <x-icon name="chevron" class="h-4 w-4 rotate-180" /> Back to areas
         </a>
         <p x-show="error" class="mb-4 flex items-center gap-2 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700 ring-1 ring-rose-200">
             <span class="font-semibold">Check this:</span> <span x-text="error"></span>
@@ -29,12 +31,12 @@
         <form x-show="!missing" class="space-y-4" @submit.prevent="save()">
             <section class="panel overflow-hidden">
                 <div class="modal-head">
-                    <h2 class="font-semibold">Workspace details</h2>
-                    <p class="text-sm text-teal-50/85">Name the workspace and choose whether it is a document repository.</p>
+                    <h2 class="font-semibold">Area details</h2>
+                    <p class="text-sm text-teal-50/85">Name the area. It appears on the desktop after you save.</p>
                 </div>
                 <div class="grid gap-4 p-6 sm:grid-cols-[1fr_auto] sm:items-end">
                     <div>
-                        <label class="label" for="workspace-name">Name</label>
+                        <label class="label" for="workspace-name">Area name</label>
                         <input id="workspace-name" x-model="name" class="input" />
                     </div>
                     <label class="flex cursor-pointer items-center gap-3 rounded-xl px-4 py-2.5 ring-1 transition" :class="repository ? 'bg-teal-50 ring-teal-300' : 'bg-white ring-slate-200'">

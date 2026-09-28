@@ -81,9 +81,9 @@
                     @elseif ($number === 2)
                         <x-picker :items="$modules" :columns="[['key' => 'name', 'label' => 'Module name'], ['key' => 'description', 'label' => 'Description']]" model="modulePicks" storage-key="panton.modules" :single="true" title="Select one module" />
                     @elseif ($number === 3)
-                        <x-picker :items="$workspaces" :columns="[['key' => 'name', 'label' => 'Workspace']]" model="workspacePicks" storage-key="panton.workspaces" :single="true" title="Select workspace" />
+                        <x-picker :items="$workspaces" :columns="[['key' => 'name', 'label' => 'Workspace']]" model="workspacePicks" storage-key="panton.areas" :single="true" title="Select workspace" />
                     @elseif ($number === 4)
-                        <x-picker :items="$users" :columns="[['key' => 'username', 'label' => 'Username'], ['key' => 'full_name', 'label' => 'Full name'], ['key' => 'department', 'label' => 'Department']]" model="userPicks" storage-key="panton.users" title="Assign users" />
+                        <x-picker :items="$users" :columns="[['key' => 'username', 'label' => 'Username'], ['key' => 'full_name', 'label' => 'Full name'], ['key' => 'department', 'label' => 'Department']]" model="userPicks" storage-key="panton.directory" title="Assign users" />
                     @else
                         <x-picker :items="$groups" :columns="[['key' => 'name', 'label' => 'Group name'], ['key' => 'total_users', 'label' => 'Total users']]" model="groupPicks" storage-key="panton.groups" title="Assign groups" />
                     @endif

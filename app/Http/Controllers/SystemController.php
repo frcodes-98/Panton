@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Data\DemoCatalog;
+use App\Models\Area;
+use App\Models\Staff;
 use Illuminate\View\View;
 
 class SystemController extends Controller
@@ -11,9 +13,9 @@ class SystemController extends Controller
     {
         return view('system.welcome', [
             'counts' => [
-                'users' => count(DemoCatalog::users()),
+                'users' => Staff::query()->count(),
                 'groups' => count(DemoCatalog::groups()),
-                'workspaces' => count(DemoCatalog::workspaces()),
+                'workspaces' => Area::query()->count(),
                 'modules' => count(DemoCatalog::modules()),
             ],
         ]);
@@ -22,7 +24,7 @@ class SystemController extends Controller
     public function users(): View
     {
         return view('system.users.index', [
-            'users' => DemoCatalog::users(),
+            'users' => Staff::query()->with('areas')->orderBy('username')->get()->map->toDirectory()->all(),
         ]);
     }
 
@@ -46,7 +48,7 @@ class SystemController extends Controller
     public function workspaces(): View
     {
         return view('system.workspaces.index', [
-            'workspaces' => DemoCatalog::workspaces(),
+            'workspaces' => Area::query()->orderBy('sort_order')->orderBy('name')->get()->map->toListing()->all(),
         ]);
     }
 
@@ -103,9 +105,9 @@ class SystemController extends Controller
         return [
             'mode' => $mode,
             'userId' => $userId,
-            'users' => DemoCatalog::users(),
+            'users' => Staff::query()->with('areas')->orderBy('username')->get()->map->toDirectory()->all(),
             'groups' => DemoCatalog::groups(),
-            'workspaces' => DemoCatalog::workspaces(),
+            'workspaces' => Area::query()->orderBy('sort_order')->orderBy('name')->get()->map->toListing()->all(),
             'widgets' => DemoCatalog::widgets(),
         ];
     }
@@ -115,8 +117,8 @@ class SystemController extends Controller
         return [
             'mode' => $mode,
             'workspaceId' => $workspaceId,
-            'workspaces' => DemoCatalog::workspaces(),
-            'users' => DemoCatalog::users(),
+            'workspaces' => Area::query()->orderBy('sort_order')->orderBy('name')->get()->map->toListing()->all(),
+            'users' => Staff::query()->with('areas')->orderBy('username')->get()->map->toDirectory()->all(),
         ];
     }
 

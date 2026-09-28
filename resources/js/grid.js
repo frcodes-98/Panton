@@ -50,7 +50,7 @@ export function dataGrid(config) {
             this.rows = loadRows(this.storageKey, this.rows);
 
             if (new URLSearchParams(window.location.search).get('saved') === '1') {
-                this.notice = 'Saved for this browser session.';
+                this.notice = 'Saved to the database.';
             }
 
             this.$watch('query', () => {

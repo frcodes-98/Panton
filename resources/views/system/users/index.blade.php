@@ -8,12 +8,12 @@
     <x-data-grid
         alpine="userList"
         title="User listing"
-        storage-key="panton.users"
         :rows="$users"
         :columns="[
             ['key' => 'username', 'label' => 'Username'],
             ['key' => 'full_name', 'label' => 'Full name'],
             ['key' => 'department', 'label' => 'Department'],
+            ['key' => 'user_type', 'label' => 'Role'],
             ['key' => 'login_status', 'label' => 'Login status', 'format' => 'login'],
             ['key' => 'suspend_login', 'label' => 'Suspend login', 'format' => 'suspend'],
             ['key' => 'last_login', 'label' => 'Last login'],
@@ -23,6 +23,7 @@
             ['key' => 'username', 'label' => 'Username'],
             ['key' => 'full_name', 'label' => 'Full name'],
             ['key' => 'department', 'label' => 'Department'],
+            ['key' => 'user_type', 'label' => 'Role'],
         ]"
         sort-key="username"
         :extra="['editUrl' => route('system.users.edit', ['user' => '__ID__'])]"

@@ -8,7 +8,7 @@
             ['route' => 'system.welcome', 'match' => 'system.welcome', 'label' => 'Welcome', 'hint' => 'System Control', 'icon' => 'home'],
             ['route' => 'system.users.index', 'match' => 'system.users.*', 'label' => 'User Management', 'hint' => 'Add / edit users', 'icon' => 'users'],
             ['route' => 'system.groups', 'match' => 'system.groups', 'label' => 'Group Management', 'hint' => 'Add / edit groups', 'icon' => 'group'],
-            ['route' => 'system.workspaces.index', 'match' => 'system.workspaces.*', 'label' => 'Workspace Management', 'hint' => 'Create / edit workspace', 'icon' => 'workspace'],
+            ['route' => 'system.workspaces.index', 'match' => 'system.workspaces.*', 'label' => 'Areas', 'hint' => 'Add more areas', 'icon' => 'workspace'],
             ['route' => 'system.modules', 'match' => 'system.modules', 'label' => 'Module Configuration', 'hint' => 'Manage module', 'icon' => 'module'],
             ['route' => 'system.widgets.index', 'match' => 'system.widgets.*', 'label' => 'Widget Configuration', 'hint' => 'Add / edit widget', 'icon' => 'widget'],
             ['route' => 'system.settings', 'match' => 'system.settings', 'label' => 'System Configuration', 'hint' => 'Add / edit system settings', 'icon' => 'settings'],
@@ -87,7 +87,7 @@
                     <div class="flex items-center gap-3">
                         <div class="hidden text-right sm:block">
                             <p class="text-sm font-medium text-slate-800">{{ strtoupper($user) }}</p>
-                            <p class="text-xs text-slate-500">Administrator</p>
+                            <p class="text-xs text-slate-500">Admin</p>
                         </div>
                         <span class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-amber-300 to-orange-400 text-sm font-bold text-orange-950">{{ strtoupper(substr($user, 0, 1)) }}</span>
                     </div>

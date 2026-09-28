@@ -10,14 +10,14 @@
             ? [
                 1 => ['Edit user setting', 'Account, access dates and personal details', false],
                 2 => ['Edit group assigned', 'Groups this user belongs to', false],
-                3 => ['Edit workspace assigned', 'Workspaces this user can open', false],
+                3 => ['Edit areas assigned', 'Areas this role can open', false],
                 4 => ['Edit widget assigned', 'Widgets shown to this user', false],
                 5 => ['Edit delegated user assigned', 'People who can act on this user’s behalf', false],
             ]
             : [
                 1 => ['Add user', 'Account, access dates and personal details', false],
                 2 => ['Assign group(s)', 'Groups this user belongs to', true],
-                3 => ['Assign workspace(s)', 'For basic users', false],
+                3 => ['Assign areas', 'Areas this role can open', false],
                 4 => ['Assign widget(s)', 'Widgets shown to this user', true],
             ];
         $pickModels = [2 => 'groupPicks', 3 => 'workspacePicks', 4 => 'widgetPicks', 5 => 'delegatePicks'];
@@ -26,7 +26,7 @@
             ['key' => 'total_users', 'label' => 'Total users'],
         ];
         $workspaceColumns = [
-            ['key' => 'name', 'label' => 'Workspace'],
+            ['key' => 'name', 'label' => 'Area'],
         ];
         $widgetColumns = [
             ['key' => 'name', 'label' => 'Widget name'],
@@ -46,6 +46,8 @@
             'mode' => $mode,
             'userId' => $userId,
             'indexUrl' => route('system.users.index'),
+            'storeUrl' => route('system.staff.store'),
+            'updateUrl' => $userId ? route('system.staff.update', $userId) : '',
             'users' => $users,
         ]))"
         x-cloak
@@ -80,7 +82,13 @@
                                 <div class="{{ $field }}"><label class="label mb-0" for="username">Username <span class="text-rose-500">*</span></label><input id="username" x-model="form.username" class="input" /></div>
                                 <div class="{{ $field }}"><label class="label mb-0" for="password">Password <span class="text-rose-500">*</span></label><input id="password" type="password" x-model="form.password" class="input" autocomplete="new-password" placeholder="{{ $mode === 'edit' ? 'Leave blank to keep' : '' }}" /></div>
                                 <div class="{{ $field }}"><label class="label mb-0" for="confirm_password">Confirm password <span class="text-rose-500">*</span></label><input id="confirm_password" type="password" x-model="form.confirm_password" class="input" autocomplete="new-password" /></div>
-                                <div class="{{ $field }}"><p class="label mb-0">User type <span class="text-rose-500">*</span></p><x-choice model="form.user_type" :options="['Superuser', 'Basic', 'Viewer']" /></div>
+                                <div class="{{ $field }}">
+                                    <p class="label mb-0">Role <span class="text-rose-500">*</span></p>
+                                    <div>
+                                        <x-choice model="form.user_type" :options="['Admin', 'View Only', 'Editor']" />
+                                        <p class="mt-1.5 text-xs text-slate-500" x-text="form.user_type === 'Admin' ? 'Can manage users and open every area.' : (form.user_type === 'Editor' ? 'Can change the areas they are assigned.' : 'Can open assigned areas without changing them.')"></p>
+                                    </div>
+                                </div>
                                 <div class="{{ $field }}"><p class="label mb-0">Login status <span class="text-rose-500">*</span></p><x-choice model="form.login_status" :options="['Enable', 'Disable']" /></div>
                                 <div class="{{ $field }}"><label class="label mb-0" for="activation_date">Activation date <span class="text-rose-500">*</span></label><input id="activation_date" type="date" x-model="form.activation_date" class="input" /></div>
                                 <div class="{{ $field }}"><label class="label mb-0" for="disable_date">Disable date <span class="text-rose-500">*</span></label><input id="disable_date" type="date" x-model="form.disable_date" class="input" /></div>
@@ -105,11 +113,11 @@
                     @elseif ($number === 2)
                         <x-picker :items="$groups" :columns="$groupColumns" model="groupPicks" storage-key="panton.groups" title="Group listing" />
                     @elseif ($number === 3)
-                        <x-picker :items="$workspaces" :columns="$workspaceColumns" model="workspacePicks" storage-key="panton.workspaces" title="Workspace list" />
+                        <x-picker :items="$workspaces" :columns="$workspaceColumns" model="workspacePicks" storage-key="panton.areas" title="Assign areas" />
                     @elseif ($number === 4)
                         <x-picker :items="$widgets" :columns="$widgetColumns" model="widgetPicks" storage-key="panton.widgets" title="Widget listing" />
                     @else
-                        <x-picker :items="$users" :columns="$userColumns" model="delegatePicks" storage-key="panton.users" :exclude-id="$userId" title="Delegated users" />
+                        <x-picker :items="$users" :columns="$userColumns" model="delegatePicks" storage-key="panton.directory" :exclude-id="$userId" title="Delegated users" />
                     @endif
                     @if ($number < count($steps))
                         <div class="mt-4 flex justify-end">

@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AreaLibraryController;
 use App\Http\Controllers\DesktopController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\LibraryRecordController;
 use App\Http\Controllers\SystemController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,7 +13,12 @@ Route::post('/logout', [LandingController::class, 'logout'])->name('logout');
 
 Route::middleware('demo.auth')->group(function () {
     Route::get('/desktop', [DesktopController::class, 'index'])->name('desktop');
-    Route::get('/desktop/{workspace}', [DesktopController::class, 'placeholder'])->name('workspace.placeholder');
+    Route::put('/desktop/{area:slug}/library', [AreaLibraryController::class, 'update'])->name('areas.library');
+    Route::get('/desktop/{area:slug}', [DesktopController::class, 'show'])->name('workspace.placeholder');
+    Route::post('/system/areas', [LibraryRecordController::class, 'storeArea'])->name('system.areas.store');
+    Route::put('/system/areas/{area}', [LibraryRecordController::class, 'updateArea'])->name('system.areas.update');
+    Route::post('/system/staff', [LibraryRecordController::class, 'storeStaff'])->name('system.staff.store');
+    Route::put('/system/staff/{staff}', [LibraryRecordController::class, 'updateStaff'])->name('system.staff.update');
 
     Route::prefix('system')->name('system.')->group(function () {
         Route::get('/', [SystemController::class, 'welcome'])->name('welcome');
